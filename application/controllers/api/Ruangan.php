@@ -19,7 +19,7 @@ class Ruangan extends BD_Controller {
          $i = $this->input->post();
       }
       $data = array(
-        'ruangan_id' => md5(microtime()),
+        'ruangan_id' => id_baru(),
         'ruangan_nama' => $i['ruangan_nama'],
         'id_dep' => 9999999,
         'is_ready' =>'n'
@@ -37,7 +37,7 @@ class Ruangan extends BD_Controller {
          $i = $this->input->get();
       }
 
-      $id = $i['id_ruangan'];
+      $id = ($i['id_ruangan'] != '') ? $i['id_ruangan'] : '' ;
       if($id){
             $data = $this->M_ruangan->get_by_id($id);
       }else{

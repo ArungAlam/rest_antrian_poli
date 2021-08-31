@@ -64,6 +64,7 @@ $route['api/example/users/(:num)'] = 'api/example/users/id/$1'; // Example 4
 $route['api/example/users/(:num)(\.)([a-zA-Z0-9_-]+)(.*)'] = 'api/example/users/id/$1/format/$3$4'; // Example 8
 
 $route['login'] = 'api/auth/login';
-$route['ruangan'] = 'api/ruangan/';
-$route['konfig'] = 'api/konfig/';
-$route['jadwal_dokter'] = 'api/jadwal_dokter/';
+$route['ruangan'] = 'api/ruangan';
+$route['konfig'] = 'api/konfig';
+$route['jadwal_dokter'] = 'api/jadwal_dokter';
+$route['iklan'] = 'api/iklan';
