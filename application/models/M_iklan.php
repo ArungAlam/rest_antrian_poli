@@ -13,14 +13,14 @@ class M_iklan extends CI_Model{
     return $this->db->from('global.global_video_iklan')->get()->num_rows();
   }
   public function get_all($where='', $limit=0, $offset=0){
-    $column_order = array('ruangan_nama'); //set column field database for datatable orderable
+    $column_order = array('iklan_tayang_hari'); //set column field database for datatable orderable
 
   $this->db->select('*');
   $this->db->from('global.global_video_iklan');
   if (!empty($where)) {
     $this->db->where($where);
   }
-  $this->db->order_by('ruangan_nama', 'asc');
+  $this->db->order_by('iklan_tayang_hari', 'asc');
     if ($limit) {
       $this->db->limit($limit, $offset);
     }

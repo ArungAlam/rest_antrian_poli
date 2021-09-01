@@ -34,7 +34,8 @@ class Auth extends BD_Controller {
         // print_r($this->config->item('thekey')); die();
         $invalidLogin = ['status' => 'Invalid Login']; //Respon if login invalid
         $val = $this->M_user->get_user($q)->row(); 
-        if($this->M_user->get_user($q)->num_rows() == 0){$this->response($invalidLogin, REST_Controller::HTTP_NOT_FOUND);}
+        if($this->M_user->get_user($q)->num_rows() == 0){
+           $this->response($invalidLogin, REST_Controller::HTTP_NOT_FOUND);}
 	    	$match = $val->usr_password;   //Get password for user from database
         if($p == $match){  //Condition if password matched
         	  $token['id'] = $val->usr_id;  //From here

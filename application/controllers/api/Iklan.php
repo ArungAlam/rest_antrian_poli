@@ -59,7 +59,83 @@ class Iklan extends BD_Controller {
       $this->set_response($respone, REST_Controller::HTTP_OK);
     }
     
+    public function index_get()
+    {
+      if( isset( $_SERVER['CONTENT_TYPE'] ) && strpos( $_SERVER['CONTENT_TYPE'], "application/json" ) !== false ){      
+         $i = json_decode( trim( file_get_contents( 'php://input' ) ), true );
+      }else{
+         $i = $this->input->get();
+      }
+      $where = array();
+      if (!empty($i['nama_iklan'])) {
+        $where['UPPER(iklan_nama) like'] = '%%'.strtoupper($i['nama_iklan']).'%%';
+      }
+      if (!empty($i['jam_tayang'])) {
+        $where['iklan_tayang_jam'] =$i['jam_tayang'];
+      }
+      if (!empty($i['hari_tayang'])) {
+        $where['iklan_tayang_hari'] = $i['hari_tayang'];
+      }
+      $data = $this->M_iklan->get_all($where);
+      $this->set_response($data, REST_Controller::HTTP_OK);
+
+    }
+    public function index_put()
+    {
+      if( isset( $_SERVER['CONTENT_TYPE'] ) && strpos( $_SERVER['CONTENT_TYPE'], "application/json" ) !== false ){      
+         $i = json_decode( trim( file_get_contents( 'php://input' ) ), true );
+      }else{
+         $i = $this->input->put();
+      }
+      $data = array(
+        'iklan_id' => $i['id_iklan'],
+        'iklan_tayang_urut' => $i['iklan_tayang_urut'],
+      );
+     
+      $this->M_iklan->update($data);
+      $cek = $this->M_iklan->get_by_id($data['iklan_id']);
+      if($cek){
+        $respone = array( 
+          'msg'     => 'data berhasil di update',
+          'success' => true
+        );
+      }else{
+        $respone = array( 
+          'msg'=> 'data tidak ditemkan',
+          'success' => false
+          );
+      }
+      $this->set_response($data, REST_Controller::HTTP_OK);
+
+    }
   
+    public function index_delete()
+    {
+      if( isset( $_SERVER['CONTENT_TYPE'] ) && strpos( $_SERVER['CONTENT_TYPE'], "application/json" ) !== false ){      
+         $i = json_decode( trim( file_get_contents( 'php://input' ) ), true );
+      }else{
+         $i = $this->input->delete();
+      }
+      $data = array(
+        'iklan_id' => $i['id_iklan'],
+      );
+     
+      $this->M_iklan->delete($data);
+      $cek = $this->M_iklan->get_by_id($data['iklan_id']);
+      if(!$cek){
+        $respone = array( 
+          'msg'     => 'data berhasil di hapus',
+          'success' => true
+        );
+      }else{
+        $respone = array( 
+          'msg'=> 'data tidak ditemkan',
+          'success' => false
+          );
+      }
+      $this->set_response($data, REST_Controller::HTTP_OK);
+
+    }
 
     
 
