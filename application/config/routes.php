@@ -68,3 +68,4 @@ $route['ruangan'] = 'api/ruangan';
 $route['konfig'] = 'api/konfig';
 $route['jadwal_dokter'] = 'api/jadwal_dokter';
 $route['iklan'] = 'api/iklan';
+$route['monitor'] = 'api/monitor';
