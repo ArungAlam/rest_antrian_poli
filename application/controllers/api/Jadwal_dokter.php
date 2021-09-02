@@ -68,6 +68,10 @@ class Jadwal_dokter extends BD_Controller {
       );
       $this->set_response($arrHari, REST_Controller::HTTP_OK);
     }
+    public function dokter_get(){
+      $data = $this->M_jadwal-> get_all_dokter();
+      $this->set_response($data, REST_Controller::HTTP_OK);
+    }
     public function poli_get(){
       $dataPoli =$this->M_jadwal->get_all_poli();
       $this->set_response($dataPoli, REST_Controller::HTTP_OK);

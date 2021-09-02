@@ -52,12 +52,12 @@ class M_ruangan extends CI_Model{
 
 		public function tambah($data = null)
 		{
-				$this->db->insert('global.global_auth_role', $data);
+				$this->db->insert('klinik.klinik_ruangan', $data);
 		}
     public function update($data = null)
 		{
 				$this->db->where('ruangan_id', $data['ruangan_id']);
-				$this->db->update('global.global_auth_role', $data);
+				$this->db->update('klinik.klinik_ruangan', $data);
 
 		}
 }

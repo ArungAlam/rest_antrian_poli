@@ -51,7 +51,7 @@ class M_jadwal_dokter extends CI_Model {
    
     public function get_all_dokter ()
     {	
-        $this->db->select('*');
+        $this->db->select('usr_name,usr_id as id_dokter');
         $this->db->from('global.global_auth_user a');
         $this->db->join('global.global_auth_role b', 'a.id_rol=b.rol_id' ,'left');
         $this->db->where('rol_jabatan','D');

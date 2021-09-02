@@ -15,8 +15,6 @@ class Ruangan extends BD_Controller {
     {
       if( isset( $_SERVER['CONTENT_TYPE'] ) && strpos( $_SERVER['CONTENT_TYPE'], "application/json" ) !== false ){      
         $i = json_decode( trim( file_get_contents( 'php://input' ) ), true );
-      }else{
-         $i = $this->input->post();
       }
       $data = array(
         'ruangan_id' => id_baru(),
@@ -58,8 +56,6 @@ class Ruangan extends BD_Controller {
     {
       if( isset( $_SERVER['CONTENT_TYPE'] ) && strpos( $_SERVER['CONTENT_TYPE'], "application/json" ) !== false ){      
         $i = json_decode( trim( file_get_contents( 'php://input' ) ), true );
-      }else{
-         $i = $this->input->delete();
       }
 
        $data = array(
@@ -80,17 +76,14 @@ class Ruangan extends BD_Controller {
     {
       if( isset( $_SERVER['CONTENT_TYPE'] ) && strpos( $_SERVER['CONTENT_TYPE'], "application/json" ) !== false ){      
         $i = json_decode( trim( file_get_contents( 'php://input' ) ), true );
-      }else{
-         $i = $this->input->put();
       }
-
        $data = array(
          'ruangan_id' => $i['id_ruangan'],
          'ruangan_nama' => $i['ruangan_nama']
        );
       $this->M_ruangan->update($data);
       $cek = $this->M_ruangan->get_by_id($i['id_ruangan']);
-      if(!$cek){
+      if($cek){
         $respone = array('status_x' => 'berhasil_diupdet');
         $this->set_response($respone, REST_Controller::HTTP_OK);
       }else{

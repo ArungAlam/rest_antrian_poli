@@ -23,7 +23,7 @@ class Monitor extends BD_Controller {
       if( isset( $_SERVER['CONTENT_TYPE'] ) && strpos( $_SERVER['CONTENT_TYPE'], "application/json" ) !== false ){      
         $i = json_decode( trim( file_get_contents( 'php://input' ) ), true );
       }else{
-         $i = $this->input->put();
+         $i = $this->put();
       }
       /* kosongan jadwal pakai ruang_id di jadwal dokter */
         $id_ruangan = $i['id_ruangan'];  
@@ -68,7 +68,7 @@ class Monitor extends BD_Controller {
       if( isset( $_SERVER['CONTENT_TYPE'] ) && strpos( $_SERVER['CONTENT_TYPE'], "application/json" ) !== false ){      
         $i = json_decode( trim( file_get_contents( 'php://input' ) ), true );
       }else{
-         $i = $this->input->put();
+         $i = $this->put();
       }
         $id_ruangan = $i['id_ruangan'];      
       /* update ruangan  */
@@ -106,7 +106,7 @@ class Monitor extends BD_Controller {
     if( isset( $_SERVER['CONTENT_TYPE'] ) && strpos( $_SERVER['CONTENT_TYPE'], "application/json" ) !== false ){      
       $i = json_decode( trim( file_get_contents( 'php://input' ) ), true );
     }else{
-       $i = $this->input->get();
+       $i = $this->get();
     }
     if($i['id_ruangan']){
       $param  = array('id_ruangan' => $i['id_ruangan']);
@@ -120,7 +120,7 @@ class Monitor extends BD_Controller {
     if( isset( $_SERVER['CONTENT_TYPE'] ) && strpos( $_SERVER['CONTENT_TYPE'], "application/json" ) !== false ){      
       $i = json_decode( trim( file_get_contents( 'php://input' ) ), true );
     }else{
-       $i = $this->input->get();
+       $i = $this->get();
     }
      $skr = Date('Y-m-d');
      $param  = array( 
@@ -138,7 +138,7 @@ class Monitor extends BD_Controller {
     if( isset( $_SERVER['CONTENT_TYPE'] ) && strpos( $_SERVER['CONTENT_TYPE'], "application/json" ) !== false ){      
       $i = json_decode( trim( file_get_contents( 'php://input' ) ), true );
     }else{
-       $i = $this->input->get();
+       $i = $this->get();
     }
      $skr = Date('Y-m-d');
      $param  = array( 
@@ -155,7 +155,7 @@ class Monitor extends BD_Controller {
     if( isset( $_SERVER['CONTENT_TYPE'] ) && strpos( $_SERVER['CONTENT_TYPE'], "application/json" ) !== false ){      
         $i = json_decode( trim( file_get_contents( 'php://input' ) ), true );
       }else{
-         $i = $this->input->get();
+         $i = $this->get();
       }
      $skr = Date('Y-m-d');
      $param  = array( 
@@ -172,7 +172,7 @@ class Monitor extends BD_Controller {
     if( isset( $_SERVER['CONTENT_TYPE'] ) && strpos( $_SERVER['CONTENT_TYPE'], "application/json" ) !== false ){      
         $i = json_decode( trim( file_get_contents( 'php://input' ) ), true );
       }else{
-         $i = $this->input->get();
+         $i = $this->get();
       }
      $skr = Date('Y-m-d');
      $param  = array( 
