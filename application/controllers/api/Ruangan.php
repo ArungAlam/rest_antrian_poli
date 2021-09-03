@@ -29,15 +29,14 @@ class Ruangan extends BD_Controller {
     
     public function index_get()
     {
+      /* deklarasi  */
       if( isset( $_SERVER['CONTENT_TYPE'] ) && strpos( $_SERVER['CONTENT_TYPE'], "application/json" ) !== false ){      
         $i = json_decode( trim( file_get_contents( 'php://input' ) ), true );
       }else{
          $i = $this->input->get();
       }
-
-      $id = ($i['id_ruangan'] != '') ? $i['id_ruangan'] : '' ;
-      if($id){
-            $data = $this->M_ruangan->get_by_id($id);
+      if($i['id_ruangan']){
+            $data = $this->M_ruangan->get_by_id($i['id_ruangan']);
       }else{
           $where = array();
           if (!empty($i['ruangan_nama'])) {
