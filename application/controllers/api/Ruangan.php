@@ -7,7 +7,7 @@ class Ruangan extends BD_Controller {
     {
         // Construct the parent class
         parent::__construct();
-        // $this->auth();  // fungsi dari bd controler /app/core/BD_Controller
+        // S$this->auth();  // fungsi dari bd controler /app/core/BD_Controller
         $this->load->model('M_ruangan');
     }
 	

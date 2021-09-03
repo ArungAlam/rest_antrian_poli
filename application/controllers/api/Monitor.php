@@ -184,5 +184,41 @@ class Monitor extends BD_Controller {
      $res = $this->M_monitor->count_pasien($param);
     $this->set_response($res, REST_Controller::HTTP_OK);
   }
+  public function antrian_all_get()
+	{    
+    if( isset( $_SERVER['CONTENT_TYPE'] ) && strpos( $_SERVER['CONTENT_TYPE'], "application/json" ) !== false ){      
+        $i = json_decode( trim( file_get_contents( 'php://input' ) ), true );
+      }else{
+         $i = $this->get();
+      }
+     $skr = date('Y-m-d');
+     $where = "a.id_ruangan is NOT NULL";
+     $raw = $this->M_monitor->antrian_all($where);
+     $jml_ruang = count($raw);
+     $data = [];
+     for ($i = 0; $i < $jml_ruang; $i++) {
+     $where_call = array(
+       'status_antrian' => 'A',
+       'id_dokter' => $raw[$i]['usr_id'],
+       'id_poli'   => $raw[$i]['poli_id'],
+       'DATE(when_create)' => $skr
+     );
+     $where_next = array(
+      'status_antrian' => 'P',
+      'id_dokter' => $raw[$i]['usr_id'],
+      'id_poli'   => $raw[$i]['poli_id'],
+      'DATE(when_create)' => $skr
+    );
+      $no_panggil = $this->M_monitor->get_no_antrian($where_call);
+      $no_next = $this->M_monitor->get_no_antrian($where_next);
+      $data[$i]['call'] = $no_panggil['no_antrian_pasien'];
+      $data[$i]['next'] = $no_next['no_antrian_pasien'];
+      $data[$i]['poli'] = $raw[$i]['poli_nama'];
+      $data[$i]['dokter'] = substr($raw[$i]['usr_name'],0,20);
+      $data[$i]['ruang'] = $raw[$i]['ruangan_nama'];
+    
+    }
+    $this->set_response($data, REST_Controller::HTTP_OK);
+  }
 
 }

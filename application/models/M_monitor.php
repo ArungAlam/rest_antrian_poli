@@ -39,5 +39,31 @@ class M_monitor extends CI_Model {
    }
 
    
-   
+   public function antrian_all($where = null)
+   {
+
+    $this->db->select("c.usr_name ,d.poli_nama,d.poli_id ,usr_id,ruangan_nama");
+    $this->db->from('klinik.klinik_jadwal_dokter a');
+    $this->db->join('global.global_auth_user c ', 'c.usr_id = a.id_dokter', 'left');
+    $this->db->join('global.global_auth_poli d ', 'd.poli_id = a.id_poli', 'left');
+    $this->db->join('klinik.klinik_ruangan e ', ' e.ruangan_id = a.id_ruangan', 'left');
+    if($where){
+    $this->db->where($where);
+   }
+    $this->db->order_by('ruangan_nama', 'ASC');
+    $query = $this->db->get();
+    return $query->result_array();
+   }
+   public function get_no_antrian($where = null)
+   {
+
+    $this->db->select("no_antrian_pasien");
+    $this->db->from('klinik.klinik_nomer_antrian a');
+    if($where){
+    $this->db->where($where);
+    }
+    $this->db->order_by('no_antrian_pasien', 'DESC');
+    $query = $this->db->get();
+    return $query->row_array();
+   }
 }
