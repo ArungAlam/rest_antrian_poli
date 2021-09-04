@@ -37,7 +37,7 @@ class Jadwal_dokter extends BD_Controller {
       if( isset( $_SERVER['CONTENT_TYPE'] ) && strpos( $_SERVER['CONTENT_TYPE'], "application/json" ) !== false ){      
         $i = json_decode( trim( file_get_contents( 'php://input' ) ), true );
       }else{
-         $i = $this->input->get();
+         $i = $this->get();
       }
 
       $id = ($i['id_jadwal_dokter'] != '') ? $i['id_jadwal_dokter'] : '' ;
@@ -50,11 +50,7 @@ class Jadwal_dokter extends BD_Controller {
           }
         $data = $this->M_jadwal->get_all($where, $i['length'], $i['start']);
       }
-      if($data){
-        $this->set_response($data, REST_Controller::HTTP_OK);
-      }else{
-        $this->set_response($data, REST_Controller::HTTP_NOT_FOUND);
-      }
+       $this->set_response($data, REST_Controller::HTTP_OK);
     }
     public function hari_get(){
       $arrHari = array(
