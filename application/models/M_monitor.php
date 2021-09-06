@@ -10,15 +10,12 @@ class M_monitor extends CI_Model {
 		
 	}
     
-   public function get_poli($where=''){
-    $this->db->select(" c.usr_name ,d.poli_nama,d.poli_id ,usr_id,e.pgw_foto as foto");
-    $this->db->from('klinik.klinik_jadwal_dokter a');
-    $this->db->join('global.global_auth_user c ', 'c.usr_id = a.id_dokter', 'left');
-    $this->db->join('global.global_auth_poli d ', 'd.poli_id = a.id_poli', 'left');
-    $this->db->join('hris.hris_pegawai e', 'e.pgw_id = c.id_pgw', 'left');
-    $this->db->where($where);
+   public function get_poli(){
+    $this->db->select("poli_id,poli_nama");
+    $this->db->from('global.global_auth_poli d');
+    $this->db->where('poli_tipe','J');
      $query = $this->db->get();
-    return $query->result();
+    return $query->result_array();
     
    }
    public function count_pasien($where){
@@ -65,5 +62,18 @@ class M_monitor extends CI_Model {
     $this->db->order_by('no_antrian_pasien', 'DESC');
     $query = $this->db->get();
     return $query->row_array();
+   }
+   public function ruangan_dipakai()
+   {
+    $this->db->select("a.ruangan_id,a.ruangan_nama,c.usr_name ,d.poli_nama ,
+                        b.jadwal_dokter_id , a.is_ready ,b.id_ruangan,b.id_dokter,b.id_poli");
+                        
+    $this->db->from('klinik.klinik_ruangan a'); 
+    $this->db->join('klinik.klinik_jadwal_dokter b ', 'b.id_ruangan = a.ruangan_id', 'left');
+    $this->db->join('global.global_auth_user c ', 'c.usr_id = b.id_dokter', 'left');
+    $this->db->join('global.global_auth_poli d ', 'd.poli_id = b.id_poli', 'left');
+    $this->db->order_by('a.ruangan_nama', 'ASC');
+    $query = $this->db->get();
+    return $query->result();
    }
 }

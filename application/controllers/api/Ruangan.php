@@ -20,10 +20,13 @@ class Ruangan extends BD_Controller {
         'ruangan_id' => id_baru(),
         'ruangan_nama' => $i['ruangan_nama'],
         'id_dep' => 9999999,
-        'is_ready' =>'n'
+        'is_ready' =>'y'
       );
       $this->M_ruangan->tambah($data);
-      $respone = array('status_db','sukses');
+      $respone = array(
+        'msg' => 'berhasil insert',
+        'success' => true 
+      );
       $this->set_response($respone, REST_Controller::HTTP_OK);
     }
     
@@ -41,6 +44,9 @@ class Ruangan extends BD_Controller {
           $where = array();
           if (!empty($i['ruangan_nama'])) {
             $where['UPPER(ruangan_nama) like'] = '%%'.strtoupper($i['ruangan_nama']).'%%';
+          }
+          if($i['is_ready']){
+            $where['is_ready'] = $i['is_ready'];
           }
        $data = $this->M_ruangan->get_all($where, $i['length'], $i['start']);
       }
@@ -63,10 +69,12 @@ class Ruangan extends BD_Controller {
       $this->M_ruangan->hapus($data);
       $cek = $this->M_ruangan->get_by_id($i['id_ruangan']);
       if(!$cek){
-        $respone = array('status_x' => 'berhasil_dihapus');
+        $respone = array('msg' => 'berhasil dihapus',
+                        'success' => true );
         $this->set_response($respone, REST_Controller::HTTP_OK);
       }else{
-        $respone = array('status_x' => 'ahhahahaha  gagal bro');
+        $respone = array('msg' => 'data tidak di temukan',
+                        'success' => false );
         $this->set_response($respone, REST_Controller::HTTP_OK);
       }
     }
@@ -76,17 +84,25 @@ class Ruangan extends BD_Controller {
       if( isset( $_SERVER['CONTENT_TYPE'] ) && strpos( $_SERVER['CONTENT_TYPE'], "application/json" ) !== false ){      
         $i = json_decode( trim( file_get_contents( 'php://input' ) ), true );
       }
-       $data = array(
-         'ruangan_id' => $i['id_ruangan'],
-         'ruangan_nama' => $i['ruangan_nama']
-       );
-      $this->M_ruangan->update($data);
+       $where = array(
+         'ruangan_id' => $i['id_ruangan']
+        );
+        $data = array();
+        if (!empty($i['ruangan_nama'])) {
+          $data['ruangan_nama'] =$i['ruangan_nama'] ;
+        }
+        if(!empty($i['is_ready'])){
+          $data['is_ready'] = $i['is_ready'];
+        }
+      $this->M_ruangan->update($data,$where);
       $cek = $this->M_ruangan->get_by_id($i['id_ruangan']);
       if($cek){
-        $respone = array('status_x' => 'berhasil_diupdet');
+        $respone = array('msg' => 'berhasil dihapus',
+                        'success' => true );
         $this->set_response($respone, REST_Controller::HTTP_OK);
       }else{
-        $respone = array('status_x' => 'ahhahahaha  gagal bro');
+        $respone = array('msg' => 'data tidak di temukan',
+                        'success' => false );
         $this->set_response($respone, REST_Controller::HTTP_OK);
       }
     }

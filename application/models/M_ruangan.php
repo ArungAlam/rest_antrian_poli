@@ -3,8 +3,6 @@
 class M_ruangan extends CI_Model{
 
 
-
-
    /* dataTables */
    public function count($where=''){
     if (!empty($where)) {
@@ -15,7 +13,7 @@ class M_ruangan extends CI_Model{
   public function get_all($where='', $limit=0, $offset=0){
     $column_order = array('ruangan_nama'); //set column field database for datatable orderable
 
-  $this->db->select('*');
+  $this->db->select('ruangan_id as id_ruangan, is_ready,ruangan_nama');
   $this->db->from('klinik.klinik_ruangan');
   if (!empty($where)) {
     $this->db->where($where);
@@ -54,10 +52,9 @@ class M_ruangan extends CI_Model{
 		{
 				$this->db->insert('klinik.klinik_ruangan', $data);
 		}
-    public function update($data = null)
+    public function update($data = null,$where =null)
 		{
-				$this->db->where('ruangan_id', $data['ruangan_id']);
+				$this->db->where($where);
 				$this->db->update('klinik.klinik_ruangan', $data);
-
 		}
 }

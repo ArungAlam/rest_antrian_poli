@@ -20,15 +20,30 @@ class Jadwal_dokter extends BD_Controller {
       }
       $data = array(
         'jadwal_dokter_id' => id_baru(),
-        'jadwal_dokter_hari' => $i['hari'],
-        'jadwal_dokter_jam_mulai' => $i['jam_mulai'],
-        'jadwal_dokter_jam_selesai' => $i['jam_selesai'],
-        'id_poli' => $i['id_poli'],
-        'id_ruangan' => $i['id_ruangan'],
-        'id_dokter' => $i['id_dokter'],
       );
+      if (!empty($i['hari'])) {
+        $data['jadwal_dokter_hari'] =$i['hari'] ;
+      }
+      if(!empty($i['jam_mulai'])){
+        $data['jadwal_dokter_jam_mulai'] = $i['jam_mulai'];
+      }
+      if(!empty($i['jam_selesai'])){
+       $data['jadwal_dokter_jam_selesai'] = $i['jam_selesai'];
+      }
+      if(!empty($i['id_poli'])){
+       $data['id_poli'] = $i['id_poli'];
+      }
+      if(!empty($i['id_ruangan'])){
+       $data['id_ruangan'] = $i['id_ruangan'];
+      }
+      if(!empty($i['id_dokter'])){
+       $data['id_dokter'] = $i['id_dokter'];
+      } 
       $this->M_jadwal->tambah($data);
-      $respone = array('status_db','sukses');
+      $respone = array(
+        'msg' => 'berhasil insert',
+        'success' => true 
+      );
       $this->set_response($respone, REST_Controller::HTTP_OK);
     }
     
@@ -45,9 +60,12 @@ class Jadwal_dokter extends BD_Controller {
             $data = $this->M_jadwal->get_by_id($id);
       }else{
           $where = array();
-          if (!empty($i['ruangan_nama'])) {
-            $where['UPPER(ruangan_nama) like'] = '%%'.strtoupper($i['ruangan_nama']).'%%';
-          }
+          if($i['id_poli']){
+            $where['a.id_poli'] = $i['id_poli'];
+          };
+          if($i['hari']){
+            $where['jadwal_dokter_hari'] = $i['hari'];
+          };
         $data = $this->M_jadwal->get_all($where, $i['length'], $i['start']);
       }
        $this->set_response($data, REST_Controller::HTTP_OK);
@@ -65,7 +83,20 @@ class Jadwal_dokter extends BD_Controller {
       $this->set_response($arrHari, REST_Controller::HTTP_OK);
     }
     public function dokter_get(){
-      $data = $this->M_jadwal-> get_all_dokter();
+      if( isset( $_SERVER['CONTENT_TYPE'] ) && strpos( $_SERVER['CONTENT_TYPE'], "application/json" ) !== false ){      
+        $i = json_decode( trim( file_get_contents( 'php://input' ) ), true );
+      }else{
+         $i = $this->input->get();
+      }
+      $where = array();
+      if($i['id_poli']){
+        $where['a.id_poli'] = $i['id_poli'];
+      };
+      if($i['hari']){
+        $where['jadwal_dokter_hari'] = $i['hari'];
+      };
+       
+      $data = $this->M_jadwal->get_where($where);
       $this->set_response($data, REST_Controller::HTTP_OK);
     }
     public function poli_get(){
@@ -82,15 +113,21 @@ class Jadwal_dokter extends BD_Controller {
       }
 
        $data = array(
-         'jadwal_dokter_id' => $i['jadwal_dokter_id'],
+         'jadwal_dokter_id' => $i['id_jadwal_dokter'],
        );
       $this->M_jadwal->hapus($data);
       $cek = $this->M_jadwal->get_by_id($i['id_ruangan']);
       if(!$cek){
-        $respone = array('status_x' => 'berhasil_dihapus');
+        $respone = array(
+          'msg' => 'berhasil dihapus',
+          'success' => true 
+        );
         $this->set_response($respone, REST_Controller::HTTP_OK);
       }else{
-        $respone = array('status_x' => 'ahhahahaha  gagal bro');
+        $respone = array(
+          'msg' => 'data tidak di temukan',
+          'success' => false 
+        );
         $this->set_response($respone, REST_Controller::HTTP_OK);
       }
     }
@@ -102,22 +139,38 @@ class Jadwal_dokter extends BD_Controller {
       }else{
          $i = $this->input->put();
       }
-      $data = array(
-            'jadwal_dokter_id' => $i['id_jadwal_dokter'],
-            'jadwal_dokter_hari' => $i['hari'],
-            'jadwal_dokter_jam_mulai' => $i['jam_mulai'],
-            'jadwal_dokter_jam_selesai' => $i['jam_selesai'],
-            'id_poli' => $i['id_poli'],
-            'id_ruangan' => $i['id_ruangan'],
-            'id_dokter' => $i['id_dokter'],
-      );
-      $this->M_jadwal->update($data);
+      
+       $where = array(
+        'jadwal_dokter_id' => $i['id_jadwal_dokter']
+       );
+       $data = array();
+       if (!empty($i['hari'])) {
+         $data['jadwal_dokter_hari'] =$i['hari'] ;
+       }
+       if(!empty($i['jam_mulai'])){
+         $data['jadwal_dokter_jam_mulai'] = $i['jam_mulai'];
+       }
+       if(!empty($i['jam_selesai'])){
+        $data['jadwal_dokter_jam_selesai'] = $i['jam_selesai'];
+       }
+       if(!empty($i['id_poli'])){
+        $data['id_poli'] = $i['id_poli'];
+       }
+       if(!empty($i['id_ruangan'])){
+        $data['id_ruangan'] = $i['id_ruangan'];
+       }
+       if(!empty($i['id_dokter'])){
+        $data['id_dokter'] = $i['id_dokter'];
+       } 
+      $this->M_jadwal->update($data,$where);
       $cek = $this->M_jadwal->get_by_id($i['id_jadwal_dokter']);
       if($cek){
-        $respone = array('status_x' => 'berhasil_diupdet');
+        $respone = array('msg' => 'berhasil dihapus',
+                        'success' => true );
         $this->set_response($respone, REST_Controller::HTTP_OK);
       }else{
-        $respone = array('status_x' => 'ahhahahaha  gagal bro');
+        $respone = array('msg' => 'data tidak di temukan',
+                        'success' => false );
         $this->set_response($respone, REST_Controller::HTTP_OK);
       }
     }
@@ -135,15 +188,17 @@ class Jadwal_dokter extends BD_Controller {
       $this->M_jadwal->update($data);
       $cek = $this->M_jadwal->get_by_id($i['id_jadwal_dokter']);
       if($cek){
-        $respone = array('status_x' => 'berhasil_diupdet');
+        $respone = array('msg' => 'berhasil dihapus',
+        'success' => true );
         $this->set_response($respone, REST_Controller::HTTP_OK);
       }else{
-        $respone = array('status_x' => 'ahhahahaha  gagal bro');
+        $respone = array('msg' => 'data tidak di temukan',
+                        'success' => false );
         $this->set_response($respone, REST_Controller::HTTP_OK);
       }
     }
 
-    
+     
 
 
 }

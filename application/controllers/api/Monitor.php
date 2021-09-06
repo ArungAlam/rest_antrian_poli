@@ -27,18 +27,23 @@ class Monitor extends BD_Controller {
       }
       /* kosongan jadwal pakai ruang_id di jadwal dokter */
         $id_ruangan = $i['id_ruangan'];  
+        $whereJadwal = array(
+            'id_ruangan' => $id_ruangan
+        );
         $dataRuang = array(
            'id_ruangan' => NULL 
         );
-        $this->M_monitor->kosongkan_ruangan($dataRuang,$id_ruangan);
+        $this->M_jadwal->update($dataRuang,$whereJadwal);
       /* update ruangan  n */
-        $dataRuang = array(
+        $whereRuang = array(
           'ruangan_id' => $id_ruangan,
+          );
+        $dataRuang = array(
           'is_ready'   => 'n'
          );
-         $this->M_ruangan->update($dataRuang);
+         $this->M_ruangan->update($dataRuang,$whereRuang);
        /* set jadwal dokter */
-         $dataRuang = array(
+         $dataJadwal = array(
             'id_ruangan' => $id_ruangan
           );
           $where = array(
@@ -46,8 +51,13 @@ class Monitor extends BD_Controller {
             'jadwal_dokter_hari'=> $i['hari'],
             'id_poli' => $i['id_poli']
           );
-          $this->M_jadwal->update_where($dataRuang,$where);
-        $cek = $this->M_jadwal->get_where($where);
+          $where_cek = array(
+            'id_dokter' => $i['id_dokter'],
+            'jadwal_dokter_hari'=> $i['hari'],
+            'a.id_poli' => $i['id_poli']
+          );
+          $this->M_jadwal->update($dataJadwal,$where);
+        $cek = $this->M_jadwal->get_where($where_cek);
         if($cek){
           $res = array (
             'msg' => 'ruangan berhasil di pakai',
@@ -72,21 +82,30 @@ class Monitor extends BD_Controller {
       }
         $id_ruangan = $i['id_ruangan'];      
       /* update ruangan  */
+        $whereRuang = array(
+           'ruangan_id' => $id_ruangan,
+        );
         $dataRuang = array(
-          'ruangan_id' => $id_ruangan,
           'is_ready'   => 'y'
          );
-         $this->M_ruangan->update($dataRuang);
+         $this->M_ruangan->update($dataRuang,$whereRuang);
        /* set jadwal dokter */
          $dataRuang = array(
             'id_ruangan' => Null
           );
           $where = array(
-            'jadwal_dokter_id'=> $i['hari'],
+            'id_dokter' => $i['id_dokter'],
+            'jadwal_dokter_hari'=> $i['hari'],
+            'id_poli' => $i['id_poli']
           );
-          $this->M_jadwal->update_where($dataRuang,$where);
-        $cek = $this->M_jadwal->get_where($where);
-        if($cek){
+          $where_cek = array(
+            'id_dokter' => $i['id_dokter'],
+            'jadwal_dokter_hari'=> $i['hari'],
+            'a.id_poli' => $i['id_poli']
+          );
+          $this->M_jadwal->update($dataRuang,$where);
+        $cek = $this->M_jadwal->get_where($where_cek);
+        if(!$cek){
           $res = array (
             'msg' => 'ruangan berhasil di kosongkan',
             'success' => true,
@@ -111,8 +130,13 @@ class Monitor extends BD_Controller {
     if($i['id_ruangan']){
       $param  = array('id_ruangan' => $i['id_ruangan']);
     }
-     $res = $this->M_monitor->get_poli($param);
+    $res = $this->M_monitor->get_poli($param);
     $this->set_response($res, REST_Controller::HTTP_OK);
+	}
+  public function ruangan_dipakai_get()
+	{    
+     $res = $this->M_monitor->ruangan_dipakai();
+     $this->set_response($res, REST_Controller::HTTP_OK);
 	}
 
   public function pasien_next_get()
@@ -129,7 +153,7 @@ class Monitor extends BD_Controller {
        'status_antrian' =>'A',
        'DATE(when_create)' => $skr,
      );
-     $res = $this->M_monitor->get_pasien($param);
+    $res = $this->M_monitor->get_pasien($param);
     $this->set_response($res, REST_Controller::HTTP_OK);
 	}
 
@@ -216,7 +240,6 @@ class Monitor extends BD_Controller {
       $data[$i]['poli'] = $raw[$i]['poli_nama'];
       $data[$i]['dokter'] = substr($raw[$i]['usr_name'],0,20);
       $data[$i]['ruang'] = $raw[$i]['ruangan_nama'];
-    
     }
     $this->set_response($data, REST_Controller::HTTP_OK);
   }

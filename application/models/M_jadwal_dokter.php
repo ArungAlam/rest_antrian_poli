@@ -27,7 +27,7 @@ class M_jadwal_dokter extends CI_Model {
       return $this->db->from('klinik.klinik_jadwal_dokter')->get()->num_rows();
     }
     public function get_all($where='', $limit=false, $offset=false){
-    $column_order = array('ruangan_nama'); //set column field database for datatable orderable
+    $column_order = array('usr_name'); //set column field database for datatable orderable
     $this->db->select('a.*,b.usr_name,c.poli_nama,d.ruangan_nama');
     $this->db->from('klinik.klinik_jadwal_dokter a');
     $this->db->join('global.global_auth_user b','a.id_dokter = b.usr_id','left');
@@ -37,10 +37,7 @@ class M_jadwal_dokter extends CI_Model {
       $this->db->where($where);
     }
     
-    if (isset($_GET['order'])) {
-      $this->db->order_by($this->column_order[$_GET['order']['0']['column']], $_GET['order']['0']['dir']);
-    }
-    $this->db->order_by('ruangan_nama', 'asc');
+    $this->db->order_by('usr_name', 'asc');
     if ($limit) {
       $this->db->limit($limit, $offset);
     }
@@ -90,21 +87,19 @@ class M_jadwal_dokter extends CI_Model {
 		{
 				$this->db->insert('klinik.klinik_jadwal_dokter', $data);
 		}
-    public function update($data,$id)
-		{
-				$this->db->where('jadwal_dokter_id', $id);
-				$this->db->update('klinik.klinik_jadwal_dokter', $data);
-		}
-    public function update_where($data,$where)
+    public function update($data,$where)
 		{
 				$this->db->where($where);
 				$this->db->update('klinik.klinik_jadwal_dokter', $data);
 		}
-    public function get_where ($where)
+    public function get_where ($where='')
     {	
         $this->db->select('*');
-        $this->db->from('klinik.klinik_jadwal_dokter');
-        $this->db->where($where);
+        $this->db->from('klinik.klinik_jadwal_dokter a');
+        $this->db->join('global.global_auth_user b', 'a.id_dokter=b.usr_id' ,'left');
+        if($where){
+          $this->db->where($where);
+        }
         $query = $this->db->get();
         return $query->result();
     }
