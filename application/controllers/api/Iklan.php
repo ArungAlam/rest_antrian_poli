@@ -74,6 +74,17 @@ class Iklan extends BD_Controller {
       $this->set_response($data, REST_Controller::HTTP_OK);
 
     }
+
+    public function tipe_iklan_get()
+    {
+
+      $data = array(
+        "T" => "Tambahan (hari besar)",
+        "U" => "Utama (video Rs)",
+        "I" => "Iklan",
+      );
+      $this->set_response($data, REST_Controller::HTTP_OK);
+    }
     public function index_put()
     {
       if( isset( $_SERVER['CONTENT_TYPE'] ) && strpos( $_SERVER['CONTENT_TYPE'], "application/json" ) !== false ){      
