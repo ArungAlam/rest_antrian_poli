@@ -2,14 +2,13 @@
 
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Tayang extends BD_Controller {
+class Iklan extends BD_Controller {
     function __construct()
     {
         // Construct the parent class
         parent::__construct();
         // $this->auth();  // fungsi dari bd controler /app/core/BD_Controller
         $this->load->model('M_iklan');
-        $this->load->model('M_tayang');
     }
 	
     public function index_post()

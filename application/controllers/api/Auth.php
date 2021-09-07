@@ -33,7 +33,7 @@ class Auth extends BD_Controller {
         $kunci = $this->config->item('thekey');
         // print_r($this->config->item('thekey')); die();
         $invalidLogin = ['status' => 'Invalid Login']; //Respon if login invalid
-        $val = $this->M_user->get_user($q)->row(); 
+        $val = $this->M_user->get_user_full($q); 
         if($this->M_user->get_user($q)->num_rows() == 0){
            $this->response($invalidLogin, REST_Controller::HTTP_NOT_FOUND);}
 	    	$match = $val->usr_password;   //Get password for user from database
@@ -44,6 +44,10 @@ class Auth extends BD_Controller {
             $token['iat'] = $date->getTimestamp();
             $token['exp'] = $date->getTimestamp() + 60*60*5; //To here is to generate token
             $output['token'] = JWT::encode($token,$kunci); //This is the output token
+            $output['username'] = $val->usr_name;
+            $output['id'] = $val->usr_id;
+            $output['role'] = $val->rol_name;
+            $output['id_dep'] = $val->id_dep;
             $this->set_response($output, REST_Controller::HTTP_OK); //This is the respon if success
         }else{
             $this->set_response($invalidLogin, REST_Controller::HTTP_NOT_FOUND); //This is the respon if failed

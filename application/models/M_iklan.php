@@ -1,6 +1,6 @@
 <?php if(!defined('BASEPATH')) exit('No direct script allowed');
 
-class M_tayang extends CI_Model{
+class M_iklan extends CI_Model{
 
 
 
@@ -38,9 +38,9 @@ class M_tayang extends CI_Model{
     public function get_by_id ($id = null)
     {	
         $this->db->select('*');
-        $this->db->from('global.global_video_iklan_tayang');
+        $this->db->from('global.global_video_iklan');
         if($id){        
-          $this->db->where('iklan_tayang_id',$id);
+          $this->db->where('iklan_id',$id);
         }
         $query = $this->db->get();
         return $query->row();
@@ -48,26 +48,26 @@ class M_tayang extends CI_Model{
     public function get_max ($id = null)
     {	
         $this->db->select('max(iklan_tayang_urut) as urut');
-        $this->db->from('global.global_video_iklan_tayang');
+        $this->db->from('global.global_video_iklan');
         if($id){        
-          $this->db->where('ruangan_id',$id);
+          $this->db->where('iklan_id',$id);
         }
         $query = $this->db->get();
         return $query->row();
     }
     public function hapus($data = null)
 		{
-				$this->db->delete('global.global_video_iklan_tayang', $data);
+				$this->db->delete('global.global_video_iklan', $data);
 		}
 
 		public function tambah($data = null)
 		{
-				$this->db->insert('global.global_video_iklan_tayang', $data);
+				$this->db->insert('global.global_video_iklan', $data);
 		}
     public function update($data = null,$where = null)
 		{
 				$this->db->where($where);
-				$this->db->update('global.global_video_iklan_tayang', $data);
+				$this->db->update('global.global_video_iklan', $data);
 
 		}
 }
