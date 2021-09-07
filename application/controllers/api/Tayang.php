@@ -8,7 +8,6 @@ class Tayang extends BD_Controller {
         // Construct the parent class
         parent::__construct();
         // $this->auth();  // fungsi dari bd controler /app/core/BD_Controller
-        $this->load->model('M_iklan');
         $this->load->model('M_tayang');
     }
 	
@@ -18,34 +17,21 @@ class Tayang extends BD_Controller {
          $i = json_decode( trim( file_get_contents( 'php://input' ) ), true );
       }else{
          $i = $this->input->post();
-      }
-
-      $uploadPath =  './upload/video_iklan/';
-
-
-    /* insert foto  */
-         $nama_iklan = $i['nama_iklan'];
-         $nama_video_upload = $_FILES["files"]["name"];
-         $raw_name   = pathinfo( $_FILES["files"]["name"], PATHINFO_FILENAME );
-         $cek_date   =  date("Ymdhis")."_".id_baru();
-         $extension  = pathinfo( $_FILES["files"]["name"], PATHINFO_EXTENSION ); // jpg
-         $basename   =  $cek_date.'_' .$raw_name . '.' . $extension; // 5dab1961e93a7_1571494241.jpg
-         move_uploaded_file($_FILES['files']['tmp_name'], $uploadPath."".$basename); 
-
-     $max =  $this->M_iklan->get_max();
-     $urutan = $max->urut + 1;
+      }         
+        $max =  $this->M_tayang->get_max();
+        $urutan = $max->urut + 1;
       
    
         $id_baru = id_baru();
         $data = array(
-          'iklan_id' => $id_baru,
-          'iklan_nama' => $nama_iklan,
-          'iklan_video_nama' => $basename,
-          'iklan_video_nama_upload' => $nama_video_upload,
-          'id_dep' => 9999999,
+          'iklan_tayang_id' => $id_baru,
+          'iklan_tayang_jam' => $i['jam_tayang'],
+          'id_iklan' => $i['id_iklan'],
+          'iklan_tayang_hari' => $i['hari_tayang'],
+          'iklan_tayang_urut' => $urutan
       );
-        $this->M_iklan->tambah($id_baru);
-        $cek = $this->M_iklan->get_by_id($data);
+        $this->M_tayang->tambah($data);
+        $cek = $this->M_tayang->get_by_id($id_baru);
       if($cek){
         $respone = array(
           "msg" => "data  berhasil di tambahkan",
@@ -66,12 +52,16 @@ class Tayang extends BD_Controller {
          $i = $this->input->get();
       }
       $where = array();
-      if (!empty($i['nama_iklan'])) {
-        $where['UPPER(iklan_nama) like'] = '%%'.strtoupper($i['nama_iklan']).'%%';
+      if (!empty($i['id_tayang_iklan'])) {
+        $where['iklan_tayang_id'] =$i['id_iklan_tayang'];
       }
-      
-     
-      $data = $this->M_iklan->get_all($where);
+      if (!empty($i['jam_tayang'])) {
+        $where['iklan_tayang_jam'] =$i['jam_tayang'];
+      }
+      if (!empty($i['hari_tayang'])) {
+        $where['iklan_tayang_hari'] = $i['hari_tayang'];
+      }
+      $data = $this->M_tayang->get_all($where);
       $this->set_response($data, REST_Controller::HTTP_OK);
 
     }
@@ -82,15 +72,19 @@ class Tayang extends BD_Controller {
       }else{
          $i = $this->input->put();
       }
-      $where = array(
-        'iklan_id' => $i['id_iklan'],
-      );
+      $where['iklan_tayang_id'] =$i['id_iklan_tayang'];
       $data = array();
-      if (!empty($i['nama_iklan'])) {
-        $data['iklan_nama'] = $i['id_iklan'];
+      if (!empty($i['jam_tayang'])) {
+        $data['iklan_tayang_jam'] =$i['jam_tayang'];
       }
-      $this->M_iklan->update($data,$where);
-      $cek = $this->M_iklan->get_by_id($where['iklan_id']);
+      if (!empty($i['hari_tayang'])) {
+        $data['iklan_tayang_hari'] = $i['hari_tayang'];
+      }
+      if (!empty($i['tayang_urut'])) {
+        $data['iklan_tayang_urut'] = $i['tayang_urut'];
+      }
+      $this->M_tayang->update($data,$where);
+      $cek = $this->M_tayang->get_by_id($i['id_iklan_tayang']);
       if($cek){
         $respone = array( 
           'msg'     => 'data berhasil di update',
@@ -102,7 +96,7 @@ class Tayang extends BD_Controller {
           'success' => false
           );
       }
-      $this->set_response($data, REST_Controller::HTTP_OK);
+      $this->set_response($respone, REST_Controller::HTTP_OK);
 
     }
   
@@ -112,16 +106,13 @@ class Tayang extends BD_Controller {
          $i = json_decode( trim( file_get_contents( 'php://input' ) ), true );
       }else{
          $i = $this->input->delete();
-      };
-      $uploadPath =  './upload/video_iklan/';
+      }
       $data = array(
-        'iklan_id' => $i['id_iklan'],
+        'iklan_tayang_id' => $i['id_iklan_tayang'],
       );
-      $dataVideo = $this->M_iklan->get_by_id($data['iklan_id']);
-      /* hapus video */
-      unlink($uploadPath."/".$dataVideo->iklan_video_nama);
-      $this->M_iklan->delete($data);
-      $cek = $this->M_iklan->get_by_id($data['iklan_id']);
+     
+      $this->M_tayang->delete($data);
+      $cek = $this->M_tayang->get_by_id($data['id_iklan_tayang']);
       if(!$cek){
         $respone = array( 
           'msg'     => 'data berhasil di hapus',
@@ -133,7 +124,7 @@ class Tayang extends BD_Controller {
           'success' => false
           );
       }
-      $this->set_response($data, REST_Controller::HTTP_OK);
+      $this->set_response($respone, REST_Controller::HTTP_OK);
 
     }
 

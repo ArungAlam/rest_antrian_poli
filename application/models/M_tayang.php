@@ -10,13 +10,13 @@ class M_tayang extends CI_Model{
     if (!empty($where)) {
       $this->db->where($where);
     }
-    return $this->db->from('global.global_video_iklan')->get()->num_rows();
+    return $this->db->from('global.global_video_iklan_tayang')->get()->num_rows();
   }
   public function get_all($where='', $limit=0, $offset=0){
     $column_order = array('iklan_tayang_hari'); //set column field database for datatable orderable
 
   $this->db->select('*');
-  $this->db->from('global.global_video_iklan');
+  $this->db->from('global.global_video_iklan_tayang');
   if (!empty($where)) {
     $this->db->where($where);
   }
@@ -31,7 +31,7 @@ class M_tayang extends CI_Model{
 	public function listing ()
     {	
         $this->db->select('*');
-        $this->db->from('global.global_video_iklan');
+        $this->db->from('global.global_video_iklan_tayang');
         $query = $this->db->get();
         return $query->result();
     }
@@ -39,19 +39,13 @@ class M_tayang extends CI_Model{
     {	
         $this->db->select('*');
         $this->db->from('global.global_video_iklan_tayang');
-        if($id){        
-          $this->db->where('iklan_tayang_id',$id);
-        }
         $query = $this->db->get();
         return $query->row();
     }
-    public function get_max ($id = null)
+    public function get_max ()
     {	
         $this->db->select('max(iklan_tayang_urut) as urut');
         $this->db->from('global.global_video_iklan_tayang');
-        if($id){        
-          $this->db->where('ruangan_id',$id);
-        }
         $query = $this->db->get();
         return $query->row();
     }
@@ -64,7 +58,7 @@ class M_tayang extends CI_Model{
 		{
 				$this->db->insert('global.global_video_iklan_tayang', $data);
 		}
-    public function update($data = null,$where = null)
+    public function update($data = null,$where)
 		{
 				$this->db->where($where);
 				$this->db->update('global.global_video_iklan_tayang', $data);
