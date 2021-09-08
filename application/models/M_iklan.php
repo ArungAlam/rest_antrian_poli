@@ -13,14 +13,13 @@ class M_iklan extends CI_Model{
     return $this->db->from('global.global_video_iklan')->get()->num_rows();
   }
   public function get_all($where='', $limit=0, $offset=0){
-    $column_order = array('iklan_tayang_hari'); //set column field database for datatable orderable
 
-  $this->db->select('*');
+  $this->db->select('*,iklan_id as id_iklan');
   $this->db->from('global.global_video_iklan');
   if (!empty($where)) {
     $this->db->where($where);
   }
-  $this->db->order_by('iklan_tayang_hari', 'asc');
+  $this->db->order_by('iklan_nama', 'asc');
     if ($limit) {
       $this->db->limit($limit, $offset);
     }
@@ -28,16 +27,9 @@ class M_iklan extends CI_Model{
   }	
 /* dataTables */
 
-	public function listing ()
-    {	
-        $this->db->select('*');
-        $this->db->from('global.global_video_iklan');
-        $query = $this->db->get();
-        return $query->result();
-    }
     public function get_by_id ($id = null)
     {	
-        $this->db->select('*');
+        $this->db->select('*,iklan_id as id_iklan');
         $this->db->from('global.global_video_iklan');
         if($id){        
           $this->db->where('iklan_id',$id);

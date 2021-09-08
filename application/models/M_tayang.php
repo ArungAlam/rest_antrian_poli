@@ -15,7 +15,9 @@ class M_tayang extends CI_Model{
   public function get_all($where='', $limit=0, $offset=0){
     $column_order = array('iklan_tayang_hari'); //set column field database for datatable orderable
 
-  $this->db->select('*');
+  $this->db->select('iklan_tayang_id as id_iklan_tayang,
+                     iklan_tayang_jam as jam_tayang,
+                     iklan_tayang_hari as hari_tayang,id_iklan');
   $this->db->from('global.global_video_iklan_tayang');
   if (!empty($where)) {
     $this->db->where($where);
@@ -39,6 +41,7 @@ class M_tayang extends CI_Model{
     {	
         $this->db->select('*');
         $this->db->from('global.global_video_iklan_tayang');
+        $this->db->where('iklan_tayang_id',$id);
         $query = $this->db->get();
         return $query->row();
     }

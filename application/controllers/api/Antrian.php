@@ -38,7 +38,7 @@ class Antrian extends BD_Controller {
           "success" => true );
       }else{
         $respone = array(
-          "msg" => "data  berhasil di tambahkan",
+          "msg" => "data  gagal di tambahkan",
           "success" => false );
       }
       $this->set_response($respone, REST_Controller::HTTP_OK);
@@ -64,8 +64,8 @@ class Antrian extends BD_Controller {
       if (!empty($i['id_poli'])) {
         $where['id_poli'] = $i['id_poli'];
       }
-      if (!empty($i['waktu'])) {
-        $where['DATE(when_create)'] = $i['waktu'];
+      if (!empty($i['when_create'])) {
+        $where['DATE(when_create)'] = $i['when_create'];
       }
       $data = $this->M_antrian->get_all($where);
       $this->set_response($data, REST_Controller::HTTP_OK);
@@ -118,7 +118,7 @@ class Antrian extends BD_Controller {
         'iklan_tayang_id' => $i['id_iklan_tayang'],
       );
      
-      $this->M_antrian->delete($data);
+      $this->M_antrian->hapus($data);
       $cek = $this->M_antrian->get_by_id($data['id_iklan_tayang']);
       if(!$cek){
         $respone = array( 

@@ -16,7 +16,7 @@ class Tayang extends BD_Controller {
       if( isset( $_SERVER['CONTENT_TYPE'] ) && strpos( $_SERVER['CONTENT_TYPE'], "application/json" ) !== false ){      
          $i = json_decode( trim( file_get_contents( 'php://input' ) ), true );
       }else{
-         $i = $this->input->post();
+         $i = $this->post();
       }         
         $max =  $this->M_tayang->get_max();
         $urutan = $max->urut + 1;
@@ -38,7 +38,7 @@ class Tayang extends BD_Controller {
           "success" => true );
       }else{
         $respone = array(
-          "msg" => "data  berhasil di tambahkan",
+          "msg" => "data  gagal di tambahkan",
           "success" => false );
       }
       $this->set_response($respone, REST_Controller::HTTP_OK);
@@ -49,7 +49,7 @@ class Tayang extends BD_Controller {
       if( isset( $_SERVER['CONTENT_TYPE'] ) && strpos( $_SERVER['CONTENT_TYPE'], "application/json" ) !== false ){      
          $i = json_decode( trim( file_get_contents( 'php://input' ) ), true );
       }else{
-         $i = $this->input->get();
+         $i = $this->get();
       }
       $where = array();
       if (!empty($i['id_tayang_iklan'])) {
@@ -70,7 +70,7 @@ class Tayang extends BD_Controller {
       if( isset( $_SERVER['CONTENT_TYPE'] ) && strpos( $_SERVER['CONTENT_TYPE'], "application/json" ) !== false ){      
          $i = json_decode( trim( file_get_contents( 'php://input' ) ), true );
       }else{
-         $i = $this->input->put();
+         $i = $this->put();
       }
       $where['iklan_tayang_id'] =$i['id_iklan_tayang'];
       $data = array();
@@ -105,14 +105,14 @@ class Tayang extends BD_Controller {
       if( isset( $_SERVER['CONTENT_TYPE'] ) && strpos( $_SERVER['CONTENT_TYPE'], "application/json" ) !== false ){      
          $i = json_decode( trim( file_get_contents( 'php://input' ) ), true );
       }else{
-         $i = $this->input->delete();
+         $i = $this->delete();
       }
       $data = array(
         'iklan_tayang_id' => $i['id_iklan_tayang'],
       );
      
-      $this->M_tayang->delete($data);
-      $cek = $this->M_tayang->get_by_id($data['id_iklan_tayang']);
+      $this->M_tayang->hapus($data);
+      $cek = $this->M_tayang->get_by_id($data['iklan_tayang_id']);
       if(!$cek){
         $respone = array( 
           'msg'     => 'data berhasil di hapus',

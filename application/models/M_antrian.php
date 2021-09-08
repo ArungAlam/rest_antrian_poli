@@ -13,8 +13,8 @@ class M_antrian extends CI_Model{
     return $this->db->from('klinik.klinik_nomer_antrian')->get()->num_rows();
   }
   public function get_all($where='', $limit=0, $offset=0){
-  $this->db->select('*,antrian_id as id_antrian');
-  $this->db->from('klinik.klinik_nomer_antrian');
+    $this->db->select('*,antrian_id as id_antrian');
+    $this->db->from('klinik.klinik_nomer_antrian');
   if (!empty($where)) {
     $this->db->where($where);
   }
