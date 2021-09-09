@@ -9,6 +9,7 @@ class Antrian extends BD_Controller {
         parent::__construct();
         // $this->auth();  // fungsi dari bd controler /app/core/BD_Controller
         $this->load->model('M_antrian');
+        $this->load->model('M_user');
     }
 	
     public function index_post()
@@ -16,18 +17,33 @@ class Antrian extends BD_Controller {
       if( isset( $_SERVER['CONTENT_TYPE'] ) && strpos( $_SERVER['CONTENT_TYPE'], "application/json" ) !== false ){      
          $i = json_decode( trim( file_get_contents( 'php://input' ) ), true );
       }else{
-         $i = $this->input->post();
+         $i = $this->post();
       }         
-       
-   
+       if(!$i['id_dokter']){
+        $cek_param[] = "param id_dokter kosong";
+       }
+       if(!$i['id_reg']){
+        $cek_param[] = "param id_reg kosong";
+       }
+       if(!$i['id_poli']){
+        $cek_param[] = "param id_poli kosong";
+       }
+       if($cek_param){
+        $respone = array(
+          "msg" => $cek_param[0],
+          "success" => false );
+          $this->set_response($respone, REST_Controller::HTTP_OK);
+
+       }else{
+        $nomer = $this->get_nomer_antrian($i['id_dokter']);
         $id_baru = id_baru();
         $data = array(
           'antrian_id' => $id_baru,
           'id_reg' => $i['id_reg'],
           'id_poli' => $i['id_poli'],
           'id_dokter' => $i['id_dokter'],
-          'status_antrian' => $i['status_antrian'],
-          'nomer_antrian_pasien' => $i['nomer_antrian_pasien'],
+          'status_antrian' => 'A',
+          'no_antrian_pasien' => $nomer,
           'when_create' => date('Y-m-d H:i:s'),
       );
         $this->M_antrian->tambah($data);
@@ -42,14 +58,32 @@ class Antrian extends BD_Controller {
           "success" => false );
       }
       $this->set_response($respone, REST_Controller::HTTP_OK);
+     }
     }
     
+    public function get_nomer_antrian($id_dokter = null)
+    {
+      $where1 = array(
+        'b.when_create' => Date('Y-m-d'),
+        'b.id_dokter' => $id_dokter,
+        'a.jadwal_dokter_hari' => date('w'),
+      );
+      $where2 = array(
+        'usr_id' => $id_dokter
+      );
+      $max = $this->M_antrian->get_max($where1);
+      $nomer_antrian = $max->jml + 1;
+      $data_dokter = $this->M_user->get_user_full($where2);
+      $kode_dokter = $data_dokter->kode_nama;
+      $nomer = strtoupper($kode_dokter)."-".$nomer_antrian;
+      return $nomer;
+    }
     public function index_get()
     {
       if( isset( $_SERVER['CONTENT_TYPE'] ) && strpos( $_SERVER['CONTENT_TYPE'], "application/json" ) !== false ){      
          $i = json_decode( trim( file_get_contents( 'php://input' ) ), true );
       }else{
-         $i = $this->input->get();
+         $i = $this->get();
       }
       $where = array();
       if (!empty($i['status_antrian'])) {
@@ -64,11 +98,56 @@ class Antrian extends BD_Controller {
       if (!empty($i['id_poli'])) {
         $where['id_poli'] = $i['id_poli'];
       }
-      if (!empty($i['when_create'])) {
-        $where['DATE(when_create)'] = $i['when_create'];
+      if (!empty($i['custom_where'])) {
+        $where_custom = $i['custom_where'] ."". " And DATE(when_create)='".date('Y-m-d')."'";
+      }else{
+        $where_custom = false;
+      
       }
+      // if (!empty($i['when_create'])) {
+      //   $where['DATE(when_create)'] = $i['when_create'];
+      // }
+      if($where_custom){
+        $data = $this->M_antrian->get_all($where_custom);
+        $this->set_response($data, REST_Controller::HTTP_OK);
+
+      }else{
+        $where['DATE(when_create)'] = date('Y-m-d');
+        $data = $this->M_antrian->get_all($where);
+        $this->set_response($data, REST_Controller::HTTP_OK);
+      }
+      
+
+    }
+    public function list_get()
+    {
+      if( isset( $_SERVER['CONTENT_TYPE'] ) && strpos( $_SERVER['CONTENT_TYPE'], "application/json" ) !== false ){      
+         $i = json_decode( trim( file_get_contents( 'php://input' ) ), true );
+      }else{
+         $i = $this->get();
+      }
+      $where = array();
+      if (!empty($i['status_antrian'])) {
+        $where['status_antrian'] =$i['status_antrian'];
+      }
+      if (!empty($i['id_antrian'])) {
+        $where['antrian_id'] =$i['id_antrian'];
+      }
+      if (!empty($i['id_dokter'])) {
+        $where['id_dokter'] =$i['id_dokter'];
+      }
+      if (!empty($i['id_poli'])) {
+        $where['id_poli'] = $i['id_poli']; 
+      }
+      $sqlwhere = implode(" and ",$where);
+      $where_custom =  " ( status_antrian = 'A' or status_antrian ='P' ) and DATE(when_create)='".date('Y-m-d')."'"." and ".$sqlwhere;
+      
+
+      
+      $where['DATE(when_create)'] = date('Y-m-d');
       $data = $this->M_antrian->get_all($where);
-      $this->set_response($data, REST_Controller::HTTP_OK);
+        $this->set_response($data, REST_Controller::HTTP_OK);
+      
 
     }
     public function index_put()
@@ -76,7 +155,7 @@ class Antrian extends BD_Controller {
       if( isset( $_SERVER['CONTENT_TYPE'] ) && strpos( $_SERVER['CONTENT_TYPE'], "application/json" ) !== false ){      
          $i = json_decode( trim( file_get_contents( 'php://input' ) ), true );
       }else{
-         $i = $this->input->put();
+         $i = $this->put();
       }
       $where = array();
       if (!empty($i['id_antrian'])) {
@@ -112,7 +191,7 @@ class Antrian extends BD_Controller {
       if( isset( $_SERVER['CONTENT_TYPE'] ) && strpos( $_SERVER['CONTENT_TYPE'], "application/json" ) !== false ){      
          $i = json_decode( trim( file_get_contents( 'php://input' ) ), true );
       }else{
-         $i = $this->input->delete();
+         $i = $this->delete();
       }
       $data = array(
         'iklan_tayang_id' => $i['id_iklan_tayang'],

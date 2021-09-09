@@ -18,13 +18,13 @@ class M_antrian extends CI_Model{
   if (!empty($where)) {
     $this->db->where($where);
   }
-  $this->db->order_by('when_create', 'asc');
+   $this->db->order_by('when_create', 'asc');
     if ($limit) {
       $this->db->limit($limit, $offset);
     }
       return $this->db->get()->result();
   }	
-/* dataTables */
+
 
 	public function listing ()
     {	
@@ -37,13 +37,18 @@ class M_antrian extends CI_Model{
     {	
         $this->db->select('*');
         $this->db->from('klinik.klinik_nomer_antrian');
+        $this->db->where('antrian_id',$id);
         $query = $this->db->get();
         return $query->row();
     }
-    public function get_max ()
+    public function get_max ($where = '')
     {	
-        $this->db->select('max(iklan_tayang_urut) as urut');
-        $this->db->from('klinik.klinik_nomer_antrian');
+        $this->db->select('count(antrian_id) as jml');
+        $this->db->from('klinik.klinik_nomer_antrian b');
+        $this->db->join('klinik.klinik_jadwal_dokter a','a.id_dokter = b.id_dokter','left');
+        if($q){
+          $this->db->where($where);
+        };
         $query = $this->db->get();
         return $query->row();
     }
