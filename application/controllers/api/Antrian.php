@@ -14,6 +14,7 @@ class Antrian extends BD_Controller {
 	
     public function index_post()
     {
+      $cek_param = [];
       if( isset( $_SERVER['CONTENT_TYPE'] ) && strpos( $_SERVER['CONTENT_TYPE'], "application/json" ) !== false ){      
          $i = json_decode( trim( file_get_contents( 'php://input' ) ), true );
       }else{
@@ -64,7 +65,7 @@ class Antrian extends BD_Controller {
     public function get_nomer_antrian($id_dokter = null)
     {
       $where1 = array(
-        'b.when_create' => Date('Y-m-d'),
+        'DATE(b.when_create)' => Date('Y-m-d'),
         'b.id_dokter' => $id_dokter,
         'a.jadwal_dokter_hari' => date('w'),
       );
@@ -104,9 +105,7 @@ class Antrian extends BD_Controller {
         $where_custom = false;
       
       }
-      // if (!empty($i['when_create'])) {
-      //   $where['DATE(when_create)'] = $i['when_create'];
-      // }
+      
       if($where_custom){
         $data = $this->M_antrian->get_all($where_custom);
         $this->set_response($data, REST_Controller::HTTP_OK);
@@ -128,27 +127,75 @@ class Antrian extends BD_Controller {
       }
       $where = array();
       if (!empty($i['status_antrian'])) {
-        $where['status_antrian'] =$i['status_antrian'];
-      }
-      if (!empty($i['id_antrian'])) {
-        $where['antrian_id'] =$i['id_antrian'];
+        $where[] ="status_antrian ='".$i['status_antrian']."'";
       }
       if (!empty($i['id_dokter'])) {
-        $where['id_dokter'] =$i['id_dokter'];
+        $where[] = "id_dokter = '".$i['id_dokter']."'";
       }
       if (!empty($i['id_poli'])) {
-        $where['id_poli'] = $i['id_poli']; 
+        $where[] = "id_poli = '".$i['id_poli']."'";
       }
       $sqlwhere = implode(" and ",$where);
-      $where_custom =  " ( status_antrian = 'A' or status_antrian ='P' ) and DATE(when_create)='".date('Y-m-d')."'"." and ".$sqlwhere;
+      $where =  " ( status_antrian = 'A' or status_antrian ='T' ) and DATE(when_create)='".date('Y-m-d')."'";      
+      if(!empty($i['id_poli']) || !empty($i['id_dokter'])){
+        $where  .=" and ".$sqlwhere;
+      }
+      $data = $this->M_antrian->get_all($where);
+      $this->set_response($data, REST_Controller::HTTP_OK);
       
 
+    }
+    public function list_batal_get()
+    {
+      if( isset( $_SERVER['CONTENT_TYPE'] ) && strpos( $_SERVER['CONTENT_TYPE'], "application/json" ) !== false ){      
+         $i = json_decode( trim( file_get_contents( 'php://input' ) ), true );
+      }else{
+         $i = $this->get();
+      }
+      $where = array();
+     
+      if (!empty($i['id_dokter'])) {
+        $where[] = "id_dokter = '".$i['id_dokter']."'";
+      }
+      if (!empty($i['id_poli'])) {
+        $where[] = "id_poli = '".$i['id_poli']."'";
+      }
+      $sqlwhere = implode(" and ",$where);
+      $where =  " status_antrian = 'B' and DATE(when_create)='".date('Y-m-d')."'";
+      if(!empty($i['id_poli']) || !empty($i['id_dokter'])){
+        $where  .=" and ".$sqlwhere;
+      }
       
-      $where['DATE(when_create)'] = date('Y-m-d');
-      $data = $this->M_antrian->get_all($where);
+       $data = $this->M_antrian->get_all($where);
         $this->set_response($data, REST_Controller::HTTP_OK);
       
 
+    }
+    public function list_panggil_get()
+    {
+      if( isset( $_SERVER['CONTENT_TYPE'] ) && strpos( $_SERVER['CONTENT_TYPE'], "application/json" ) !== false ){      
+         $i = json_decode( trim( file_get_contents( 'php://input' ) ), true );
+      }else{
+         $i = $this->get();
+      }
+      $where = array();
+     
+      if (!empty($i['id_dokter'])) {
+        $where[] = "id_dokter = '".$i['id_dokter']."'";
+      }
+      if (!empty($i['id_poli'])) {
+        $where[] = "id_poli = '".$i['id_poli']."'";
+      }
+      $sqlwhere = implode(" and ",$where);
+      $where =  " status_antrian = 'P' and DATE(when_create)='".date('Y-m-d')."'";
+      if(!empty($i['id_poli']) && !empty($i['id_dokter'])){
+        $where  .=" and ".$sqlwhere;
+      }
+
+      
+      $data = $this->M_antrian->get_all($where);
+      $this->set_response($data, REST_Controller::HTTP_OK);
+      
     }
     public function index_put()
     {

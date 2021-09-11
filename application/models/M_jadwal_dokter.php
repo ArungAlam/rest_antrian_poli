@@ -64,7 +64,7 @@ class M_jadwal_dokter extends CI_Model {
     }
     public function get_all_poli ()
     {	
-        $this->db->select('*');
+        $this->db->select('*,poli_id as id_poli');
         $this->db->from('global.global_auth_poli');
         $this->db->where('poli_tipe','J');
         $query = $this->db->get();
