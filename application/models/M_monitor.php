@@ -39,7 +39,7 @@ class M_monitor extends CI_Model {
    public function antrian_all($where = null)
    {
 
-    $this->db->select("c.usr_name ,d.poli_nama,d.poli_id ,usr_id,ruangan_nama");
+    $this->db->select("c.usr_name ,d.poli_nama,d.poli_id ,usr_id,ruangan_nama,id_dokter,id_ruangan");
     $this->db->from('klinik.klinik_jadwal_dokter a');
     $this->db->join('global.global_auth_user c ', 'c.usr_id = a.id_dokter', 'left');
     $this->db->join('global.global_auth_poli d ', 'd.poli_id = a.id_poli', 'left');

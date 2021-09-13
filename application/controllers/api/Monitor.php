@@ -222,24 +222,34 @@ class Monitor extends BD_Controller {
      $data = [];
      for ($i = 0; $i < $jml_ruang; $i++) {
      $where_call = array(
-       'status_antrian' => 'A',
+       'status_antrian' => 'P',
        'id_dokter' => $raw[$i]['usr_id'],
        'id_poli'   => $raw[$i]['poli_id'],
        'DATE(when_create)' => $skr
      );
      $where_next = array(
-      'status_antrian' => 'P',
+      'status_antrian' => 'A',
       'id_dokter' => $raw[$i]['usr_id'],
       'id_poli'   => $raw[$i]['poli_id'],
       'DATE(when_create)' => $skr
     );
+     $where_layani = array(
+      'status_antrian' => 'L',
+      'id_dokter' => $raw[$i]['usr_id'],
+      'id_poli'   => $raw[$i]['poli_id'],
+      'DATE(when_create)' => $skr
+    );
+      $no_last = $this->M_monitor->get_no_antrian($where_layani);
       $no_panggil = $this->M_monitor->get_no_antrian($where_call);
       $no_next = $this->M_monitor->get_no_antrian($where_next);
+      $data[$i]['layani'] = $no_layani['no_antrian_pasien'];
       $data[$i]['call'] = $no_panggil['no_antrian_pasien'];
       $data[$i]['next'] = $no_next['no_antrian_pasien'];
       $data[$i]['poli'] = $raw[$i]['poli_nama'];
-      $data[$i]['dokter'] = substr($raw[$i]['usr_name'],0,20);
-      $data[$i]['ruang'] = $raw[$i]['ruangan_nama'];
+      $data[$i]['dokter_nama'] = substr($raw[$i]['usr_name'],0,20);
+      $data[$i]['ruangan_nama'] = $raw[$i]['ruangan_nama'];
+      $data[$i]['id_ruangan'] = $raw[$i]['id_ruangan'];
+      $data[$i]['id_dokter'] = $raw[$i]['id_dokter'];
     }
     $this->set_response($data, REST_Controller::HTTP_OK);
   }
